@@ -1,0 +1,25 @@
+{
+  "name": "fhir-json-client",
+  "version": "1.0.0",
+  "author": "Brett Ausmeier <brett@ausmeier.co.za>",
+  "description": "A minimal JSON client for FHIR HTTP servers.",
+  "license": "BSD-3-Clause",
+  "main": "lib/client.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bausmeier/fhir-store.git"
+  },
+  "scripts": {
+    "lint": "standard",
+    "test": "tap --cov -J \"test/**/*.js\"",
+    "codecov": "tap --coverage-report=lcov && codecov"
+  },
+  "dependencies": {
+    "media-typer": "^0.3.0"
+  },
+  "devDependencies": {
+    "codecov": "^2.1.0",
+    "standard": "^10.0.2",
+    "tap": "^10.3.2"
+  }
+}

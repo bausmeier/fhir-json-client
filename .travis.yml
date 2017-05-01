@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - "7"
+after_success:
+  - yarn run codecov
+cache:
+  yarn: true
