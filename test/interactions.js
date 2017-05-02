@@ -235,6 +235,67 @@ tap.test('interactions', (t) => {
       })
     })
 
+    t.test('transaction', (t) => {
+      const bundle = {
+        title: 'Test Bundle',
+        id: 'urn:uuid:066942ba-8e70-49a5-88d3-b1c9f92c4f1a',
+        updated: (new Date()).toJSON(),
+        entry: []
+      }
+      server.once('request', (req, res) => {
+        let body = ''
+        req.on('data', (data) => {
+          body += data
+        })
+        req.on('end', () => {
+          t.equal(req.method, 'POST')
+          t.equal(req.url, '/')
+          body = JSON.parse(body)
+          t.deepEqual(body, bundle, 'should have the correct body')
+          res.writeHead(200)
+          res.end()
+        })
+      })
+      client.transaction(bundle, (err) => {
+        t.error(err)
+        t.end()
+      })
+    })
+
+    t.test('transaction with overrides', (t) => {
+      const requestId = '387c2133-c703-4e60-a0d7-eb3564aad860'
+      const bundle = {
+        title: 'Test Bundle',
+        id: 'urn:uuid:066942ba-8e70-49a5-88d3-b1c9f92c4f1a',
+        updated: (new Date()).toJSON(),
+        entry: []
+      }
+      server.once('request', (req, res) => {
+        let body = ''
+        req.on('data', (data) => {
+          body += data
+        })
+        req.on('end', () => {
+          t.equal(req.method, 'POST')
+          t.equal(req.url, '/')
+          t.equal(req.headers['x-request-id'], requestId)
+          body = JSON.parse(body)
+          t.deepEqual(body, bundle, 'should have the correct body')
+          res.writeHead(200)
+          res.end()
+        })
+      })
+      const overrides = {
+        headers: {
+          'X-Request-Id': requestId
+        }
+      }
+      client.transaction(bundle, overrides, (err) => {
+        t.error(err)
+        t.end()
+      })
+    })
+
     t.end()
   })
 })
