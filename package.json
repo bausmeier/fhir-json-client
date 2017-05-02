@@ -1,6 +1,6 @@
 {
   "name": "fhir-json-client",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Brett Ausmeier <brett@ausmeier.co.za>",
   "description": "A minimal JSON client for FHIR HTTP servers.",
   "license": "BSD-3-Clause",
