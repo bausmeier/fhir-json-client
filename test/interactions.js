@@ -3,6 +3,7 @@
 const Client = require('../lib/client')
 const http = require('http')
 const tap = require('tap')
+const url = require('url')
 
 tap.test('interactions', (t) => {
   const server = http.createServer()
@@ -292,6 +293,50 @@ tap.test('interactions', (t) => {
       }
       client.transaction(bundle, overrides, (err) => {
         t.error(err)
+        t.end()
+      })
+    })
+
+    t.test('search', (t) => {
+      const query = {
+        identifier: 'urn:uuid:7f9160ca-38b9-47d8-bf30-b44d1c5655b3|123',
+        'provider:Patient': '321'
+      }
+      server.once('request', (req, res) => {
+        t.equal(req.method, 'GET')
+        const parsed = url.parse(req.url, true)
+        t.equal(parsed.pathname, '/Patient')
+        t.deepEqual(parsed.query, query)
+        res.writeHead(200)
+        res.end()
+      })
+      client.search('Patient', query, (err, res) => {
+        t.error(err)
+        t.equal(res.statusCode, 200)
+        t.end()
+      })
+    })
+
+    t.test('search with overrides', (t) => {
+      const requestId = 'd9f23fcb-210a-48e8-94d6-8b6ab0e12d6c'
+      const query = {}
+      server.once('request', (req, res) => {
+        t.equal(req.method, 'GET')
+        t.equal(req.headers['x-request-id'], requestId)
+        const parsed = url.parse(req.url, true)
+        t.equal(parsed.pathname, '/Patient')
+        t.deepEqual(parsed.query, query)
+        res.writeHead(200)
+        res.end()
+      })
+      const overrides = {
+        headers: {
+          'X-Request-Id': requestId
+        }
+      }
+      client.search('Patient', query, overrides, (err, res) => {
+        t.error(err)
+        t.equal(res.statusCode, 200)
         t.end()
       })
     })
