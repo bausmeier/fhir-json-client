@@ -38,7 +38,7 @@ tap.test('content type', (t) => {
     t.test('should propagate unacceptable status code', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
@@ -56,7 +56,7 @@ tap.test('content type', (t) => {
     t.test('should not parse bodies with no content type', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
@@ -74,7 +74,7 @@ tap.test('content type', (t) => {
     t.test('should not parse bodies with unparseable type', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
@@ -94,7 +94,7 @@ tap.test('content type', (t) => {
     t.test('should not parse bodies with unparseable subtype', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
@@ -114,7 +114,7 @@ tap.test('content type', (t) => {
     t.test('should not parse bodies with unparseable suffix', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
@@ -134,7 +134,7 @@ tap.test('content type', (t) => {
     t.test('should parse bodies with application/json content type', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
@@ -154,7 +154,7 @@ tap.test('content type', (t) => {
     t.test('should parse bodies with application/fhir+json content type', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
@@ -171,10 +171,30 @@ tap.test('content type', (t) => {
       })
     })
 
+    t.test('should parse bodies with application/json+fhir content type', (t) => {
+      server.once('request', (req, res) => {
+        t.match(req.headers, {
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
+          'accept-charset': 'utf-8'
+        })
+
+        res.writeHead(200, {
+          'Content-Type': 'application/json+fhir; charset=utf-8'
+        })
+        res.end(stringBody)
+      })
+
+      client.read('Patient', '1', (err, res, body) => {
+        t.error(err)
+        t.deepEqual(body, jsonBody)
+        t.end()
+      })
+    })
+
     t.test('should return a syntax error when parsing invalid content', (t) => {
       server.once('request', (req, res) => {
         t.match(req.headers, {
-          accept: 'application/fhir+json, application/json;q=0.9',
+          accept: 'application/fhir+json, application/json+fhir, application/json;q=0.9',
           'accept-charset': 'utf-8'
         })
 
