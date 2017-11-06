@@ -2,6 +2,7 @@
 
 const Client = require('../lib/client')
 const tap = require('tap')
+const {Agent} = require('http')
 
 tap.test('Client', (t) => {
   t.test('should allow no options', (t) => {
@@ -27,6 +28,31 @@ tap.test('Client', (t) => {
     t.equal(client._options.port, '8080')
     t.equal(client._options.path, '/fhir/')
     t.ok(client._options.agent.keepAlive)
+    t.end()
+  })
+
+  t.test('should support using a custom agent', (t) => {
+    const customAgent = new Agent()
+    const client = new Client({
+      protocol: 'http:',
+      hostname: 'example.com',
+      port: '8080',
+      path: '/fhir/',
+      agent: customAgent
+    })
+    t.equal(client._options.agent, customAgent)
+    t.end()
+  })
+
+  t.test('should support using no agent', (t) => {
+    const client = new Client({
+      protocol: 'http:',
+      hostname: 'example.com',
+      port: '8080',
+      path: '/fhir/',
+      agent: false
+    })
+    t.equal(client._options.agent, false)
     t.end()
   })
 
